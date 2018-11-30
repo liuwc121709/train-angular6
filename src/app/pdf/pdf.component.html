@@ -1,0 +1,14 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div>
+  <label>PDF src</label>
+  <input type="text" placeholder="PDF src" [value]="pdfPath">
+</div>
+
+<input (change)="onFileSelected()" type="file" id="file">
+
+
+<pdf-viewer [src]="pdfSrc"
+    [page]="page"
+    [original-size]="true"
+    style="display: block;">
+</pdf-viewer>
