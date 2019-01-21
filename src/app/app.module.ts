@@ -1,13 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
 import { PdfComponent } from './pdf/pdf.component';
-import { EditorComponent } from './ueditor/ueditor.component';
-
-
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+
+import { EditorComponent } from './ueditor/ueditor.component';
 import { UEditorModule } from 'ngx-ueditor';
 
 @NgModule({
@@ -17,7 +17,8 @@ import { UEditorModule } from 'ngx-ueditor';
     EditorComponent
   ],
   imports: [
-    BrowserModule,
+	BrowserModule,
+	FormsModule,
     // PdfModule,
 	PdfViewerModule,
 	UEditorModule.forRoot({

@@ -1,1 +1,5 @@
-<ueditor  #full></ueditor>
+<ueditor [(ngModel)]="ueditor_content"
+         [config]="setting"
+		 [loadingTip]="'加载中……'"
+		 (onReady)="ueditorReady($event)"
+         (ngModelChange)="ueditorChange($event)"></ueditor>
