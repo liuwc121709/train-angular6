@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'example-pdf',
+  selector: 'app-example-pdf',
   templateUrl: './pdf.component.html',
   styleUrls: ['./pdf.component.css']
 })
