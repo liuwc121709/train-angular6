@@ -1,24 +1,37 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { AppComponent } from './app.component';
+import {AppRoutingModule} from './app-routing.module';
 
-import { PdfComponent } from './pdf/pdf.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-
-import { EditorComponent } from './ueditor/ueditor.component';
 import { UEditorModule } from 'ngx-ueditor';
+
+// component
+import {PdfComponent} from './@theme/components/pdf/pdf.component';
+import {UEditorxComponent} from './@theme/components/ueditor/ueditor.component';
+
+// pages
+import {PdfpComponent} from './pages/pdf-page/pdfp.component';
+import {UeditorpComponent} from './pages/ueditor-page/ueditorp.component';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    PdfComponent,
-    EditorComponent
+	AppComponent,
+	PdfpComponent,
+	UeditorpComponent,
+	PdfComponent,
+	UEditorxComponent
   ],
   imports: [
 	BrowserModule,
 	FormsModule,
+	AppRoutingModule,
+	HttpClientModule,
     // PdfModule,
 	PdfViewerModule,
 	UEditorModule.forRoot({

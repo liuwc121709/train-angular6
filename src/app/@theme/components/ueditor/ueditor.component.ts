@@ -15,7 +15,7 @@ import { UEditorComponent } from 'ngx-ueditor';
   styleUrls: ['./ueditor.component.css']
 })
 
-export class EditorComponent  implements OnInit , OnDestroy {
+export class UEditorxComponent  implements OnInit , OnDestroy {
   @Input() ueditor_content: String;
   @Output() onEditorContentChange = new EventEmitter();
 
@@ -37,7 +37,7 @@ export class EditorComponent  implements OnInit , OnDestroy {
   }
 
   ngOnDestroy() {
-    this.ueditorInstant.destroy();
+    // this.ueditorInstant.destroy();
   }
 
   ueditorReady(comp: UEditorComponent) {
