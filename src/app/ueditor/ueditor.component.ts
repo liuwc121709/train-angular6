@@ -23,7 +23,7 @@ export class EditorComponent  implements OnInit , OnDestroy {
 
   setting = {
 	toolbars: [
-		['fullscreen', 'source', 'undo', 'redo'],
+		['fullscreen', 'source', 'undo', 'redo', 'insertimage', 'simpleupload','attachment'],
 		['bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc']
 	],
 	autoClearinitialContent: true,
