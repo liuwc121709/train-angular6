@@ -29539,6 +29539,11 @@ UE.registerUI('message', function(editor) {
     });
 
     function updateHolderPos(){
+		// if me by customer start
+		if (me === undefined || me.ui === undefined) {
+			return;
+		}
+		// if me by customer end
         var toolbarbox = me.ui.getDom('toolbarbox');
         if (toolbarbox) {
             holder.style.top = toolbarbox.offsetHeight + 3 + 'px';
