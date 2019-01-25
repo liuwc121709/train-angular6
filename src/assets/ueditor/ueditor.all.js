@@ -17473,7 +17473,11 @@ UE.plugins['autoheight'] = function () {
             if(lastScrollY === null){
                 lastScrollY = this.scrollY
             }else if(this.scrollY == 0 && lastScrollY != 0){
-                me.window.scrollTo(0,0);
+				// if window by customer start
+				if (me.window !== undefined) {
+					me.window.scrollTo(0,0);
+				}
+				// if window by customer end
                 lastScrollY = null;
             }
         }
@@ -23908,9 +23912,9 @@ UE.plugin.register('autoupload', function (){
 
 // plugins/autosave.js
 UE.plugin.register('autosave', function (){
-	// enableAutoSave
+	// if enableAutoSave by customer start
 	if (!this.getOpt('enableAutoSave')) {return;}
-
+	// if enableAutoSave by customer end
     var me = this,
         //无限循环保护
         lastSaveTime = new Date(),
