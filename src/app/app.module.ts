@@ -36,7 +36,7 @@ import {UeditorpComponent} from './pages/ueditor-page/ueditorp.component';
 	PdfViewerModule,
 	UEditorModule.forRoot({
 		js: [
-		  `./assets/ueditor/ueditor.all.min.js`,
+		  `./assets/ueditor/ueditor.all.js`,
 		  `./assets/ueditor/ueditor.config.js`,
 		],
 		// 默认前端配置项

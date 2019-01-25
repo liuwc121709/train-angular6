@@ -23908,6 +23908,8 @@ UE.plugin.register('autoupload', function (){
 
 // plugins/autosave.js
 UE.plugin.register('autosave', function (){
+	// enableAutoSave
+	if (!this.getOpt('enableAutoSave')) {return;}
 
     var me = this,
         //无限循环保护

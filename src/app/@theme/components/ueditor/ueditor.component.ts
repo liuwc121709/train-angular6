@@ -23,7 +23,7 @@ export class UEditorxComponent  implements OnInit , OnDestroy {
 
   setting = {
 	toolbars: [
-		['fullscreen', 'source', 'undo', 'redo', 'insertimage', 'simpleupload','attachment'],
+		['fullscreen', 'source', 'undo', 'redo', 'insertimage','attachment'],
 		['bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc']
 	],
 	autoClearinitialContent: true,
