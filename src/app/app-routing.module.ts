@@ -4,7 +4,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {PdfpComponent} from './pages/pdf-page/pdfp.component';
 import {UeditorpComponent} from './pages/ueditor-page/ueditorp.component';
-
+import {MappComponent} from './pages/map-page/mapp.component';
 
 const routes: Routes = [
 	  {
@@ -14,6 +14,10 @@ const routes: Routes = [
 	  {
 		path: 'ueditorp',
 		component: UeditorpComponent,
+	  },
+	  {
+		path: 'mapp',
+		component: MappComponent,
 	  },
 	  {
 		path: '',

@@ -13,10 +13,12 @@ import { UEditorModule } from 'ngx-ueditor';
 // component
 import {PdfComponent} from './@theme/components/pdf/pdf.component';
 import {UEditorxComponent} from './@theme/components/ueditor/ueditor.component';
+import {MapComponent} from './@theme/components/map/map.component';
 
 // pages
 import {PdfpComponent} from './pages/pdf-page/pdfp.component';
 import {UeditorpComponent} from './pages/ueditor-page/ueditorp.component';
+import {MappComponent} from './pages/map-page/mapp.component';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import {UeditorpComponent} from './pages/ueditor-page/ueditorp.component';
 	PdfpComponent,
 	UeditorpComponent,
 	PdfComponent,
-	UEditorxComponent
+	UEditorxComponent,
+	MapComponent,
+	MappComponent
   ],
   imports: [
 	BrowserModule,
