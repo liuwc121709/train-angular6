@@ -233,7 +233,7 @@ export class MapComponent implements OnInit, OnChanges {
     const point = new BMap.Point(itemData.longitude, itemData.latitude);
 
     // 自定义label
-    const tpl = '<div class="bubble bubble-1" data-longitude="' + itemData.longitude + '"' +
+    const tpl = '<div class="circleContent" data-longitude="' + itemData.longitude + '"' +
       ' data-latitude="' + itemData.latitude + '">' +
       '<p class="name" title="' + itemData.title + '">' + itemData.title + '</p>' +
       '<p class="count"><span>' + itemData.count + '</span>公司</p>' +
@@ -315,7 +315,7 @@ export class MapComponent implements OnInit, OnChanges {
     const point = new BMap.Point(itemData.longitude, itemData.latitude);
 
     // 自定义label样式
-    const tpl = '<div class=" bubble-1 ZLQbubble" data-longitude="' + itemData.longitude + '"' +
+    const tpl = '<div class="labelName" data-longitude="' + itemData.longitude + '"' +
       ' data-latitude="' + itemData.latitude + '">' +
       '<span class="name" title="' + itemData.title + '">' + itemData.title + '</span>' +
       '</div>';

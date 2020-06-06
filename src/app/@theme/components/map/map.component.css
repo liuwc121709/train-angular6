@@ -1,60 +1,41 @@
-*{
-    padding: 0;
-    margin: 0;
-}
-body,html {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    font-family: "微软雅黑";
+#allMap {
+  height: 500px;
+  width: 100%;
 }
 
-#allMap {
-    height: 500px;
-    width: 100%;
+#allMap ::ng-deep .circleContent p {
+  width: 80px;
+  line-height: 20px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
 }
-/*地图聚合样式*/
-.bubble p {
-    width: 80px;
-    line-height: 20px;
-    text-align: center;
-    color: #fff;
-    font-size: 14px;
+
+#allMap ::ng-deep .circleContent .name {
+  margin-top: 20px;
 }
-.bubble .name {
-    margin-top: 20px;
+
+#allMap ::ng-deep .circleContent .count {
+  margin-top: -10px;
 }
-.bubble .count {
-    margin-top: -10px;
+
+#allMap ::ng-deep .labelName {
+  text-align: center;
+  padding: 0px 5px;
 }
-.ZLQbubble{
-    text-align: center;
-    padding: 0px 5px;
+
+#allMap ::ng-deep .labelName span {
+  height: 22px;
+  line-height: 22px;
+  color: "#fff";
+  font-size: 14px;
 }
-.ZLQbubble span{
-    height: 22px;
-    line-height: 22px;
-    color: '#fff';
-    font-size: 14px;
+
+#allMap ::ng-deep .labelName .count {
+  font-weight: bold;
 }
-.ZLQbubble .count{
-    font-weight: bold;
-}
-.drawing , .exit{
-    position: absolute;
-    top: 10px;
-    left: 1300px;
-    background: #46ACFF;
-    border: 0px;
-    color: white;
-    width: 100px;
-    height: 25px;
-    line-height: 25px;
-    font-size: 15px;
-    font-weight: bold;
-    border-radius: 15px;
-    outline:none;
-}
-.exit{
-    left: 1410px;
-}
+
+/* 可以隐藏版本，不建议隐藏，隐藏后，商用可能引起侵权问题...... */
+/* #allMap ::ng-deep .BMap_cpyCtrl, #allMap ::ng-deep .anchorBL{
+    display:none;
+} */
