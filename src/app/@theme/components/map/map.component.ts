@@ -17,9 +17,12 @@ export class MapComponent implements OnInit, OnChanges {
   cacheRectangle: any = [];
   cachePolygonAll: any = [];
   rootEl = 'allMap';
-  defaultPoint: any = {
-    longitude: 116.403694,
-    latitude: 39.916042
+  defaultPosition: any = {
+    'point': {
+      longitude: 116.403694,
+      latitude: 39.916042
+    },
+    'city': '北京市'
   };
   defaultZoom: any = 11;
   clickPoint: any = null;
@@ -93,7 +96,8 @@ export class MapComponent implements OnInit, OnChanges {
     // center point
     let point = this.clickPoint;
     if (!point) {
-      point = new BMap.Point(this.defaultPoint.longitude, this.defaultPoint.latitude);
+      // defaultPosition
+      point = this.getDefaultPoint();
     }
     this.clickPoint = null;
     map.centerAndZoom(point, this.currentMapData.config.zoom);
@@ -160,7 +164,7 @@ export class MapComponent implements OnInit, OnChanges {
     // 初始化地图
     // 第一个参数, 设置中心点坐标，可以使用中文或英文
     // 第二个参数, 设置地图级别, 级别为0 ~ 19, 数字越大，越详细
-    const point = new BMap.Point(this.defaultPoint.longitude, this.defaultPoint.latitude);
+    const point = this.getDefaultPoint();
     map.centerAndZoom(point, this.defaultZoom);
     // map.centerAndZoom("北京", 11);
     // map.centerAndZoom("Hongkong", 11);
@@ -173,11 +177,11 @@ export class MapComponent implements OnInit, OnChanges {
       // 获取地图缩放级别
       const zoomLevel = map.getZoom();
       // 根据缩放来显示对应内容
-      if ($this.currentMapData.config.zoom !== zoomLevel) {
-        $this.setDataConfig('', zoomLevel);
-        // 获取新数据，刷新地图
-        $this.refreshMap();
-      }
+      // if ($this.currentMapData.config.zoom !== zoomLevel) {
+      //   $this.setDataConfig('', zoomLevel);
+      //   // 获取新数据，刷新地图
+      //   $this.refreshMap();
+      // }
     });
 
     // 监听地图移动,根据视野动态加载
@@ -619,5 +623,24 @@ export class MapComponent implements OnInit, OnChanges {
     }
 
     this.currentMapData.config = curDataConfig;
+  }
+
+  getDefaultPoint() {
+    // BMapClass
+    const BMap = this.BMapClass;
+
+    // center point
+    let point;
+    if (this.config.defaultPoint) {
+      point = new BMap.Point(this.config.defaultPoint.longitude, this.config.defaultPoint.latitude);
+    } else if (this.config.city) {
+      point = this.config.city;
+    } else if (this.defaultPosition.point) {
+      point = new BMap.Point(this.defaultPosition.point.longitude, this.defaultPosition.point.latitude);
+    } else if (this.defaultPosition.city) {
+      point = this.defaultPosition.city;
+    }
+
+    return point;
   }
 }

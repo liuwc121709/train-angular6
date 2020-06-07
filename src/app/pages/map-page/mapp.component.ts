@@ -12,6 +12,12 @@ export class MappComponent implements OnInit {
     mapConfig = {
       ak: 'iGG2msceH2GHHVaeHBGNMDWZQRcWfrw4',
       // defaultType: 'sinkArea',
+      defaultPoint: {
+        longitude: 116.403694,
+        latitude: 39.916042
+      },
+      // defaultCity: '天津',
+      defaultType: 'sinkArea',
       dataConfig: [
         {
           type: 'sinkArea',
@@ -214,6 +220,7 @@ export class MappComponent implements OnInit {
         this.mapData = {
           type: type,
           mapData: this.sinkStreetData
+          // mapData: []
         };
     } else if (type === 'sinkRoad') {
       this.mapData = {
