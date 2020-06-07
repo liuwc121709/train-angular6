@@ -13,14 +13,50 @@ export class MapComponent implements OnInit, OnChanges {
 
   BMapClass: any = null;
   MapInstance: any = null;
-  currentMapData: any = null;
-  currentMapDataConfig: any = null;
+  currentMapData: any = {};
   cacheRectangle: any = [];
   cachePolygonAll: any = [];
   rootEl = 'allMap';
+  defaultPoint: any = {
+    longitude: 116.403694,
+    latitude: 39.916042
+  };
+  defaultZoom: any = 11;
+  clickPoint: any = null;
 
   constructor() {
 
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // 第一次进入，地图异步并没有加载成功
+    if (changes.data.firstChange) {
+      // 设置默认type，将会在地图加载成功后，加载
+      if (!this.config.defaultType) {
+        // init data
+        this.currentMapData.area = changes.data.currentValue.area;
+        this.currentMapData.mapData = changes.data.currentValue.mapData;
+        this.setDataConfig(changes.data.currentValue.type, '');
+      }
+      return;
+    }
+
+    // 1. 点击marker，跳转下一个层次，调用refresh，从外界主动获取数据
+    // 2. 组件外，主动修改data数据
+    // 3. 地图缩放，改变zoom，调用refresh，从外界主动获取数据
+    if (!changes.data.firstChange) {
+      // init data
+      this.currentMapData.area = changes.data.currentValue.area;
+      this.currentMapData.mapData = changes.data.currentValue.mapData;
+
+      // 针对“组件外“操作，传递的数据类型和当前类型不等，不是refresh获取数据
+      if (changes.data.currentValue.type !== this.currentMapData.config.type) {
+        this.setDataConfig(changes.data.currentValue.type, '');
+      }
+
+      // 根据当前数据currentMapData，渲染数据
+      this.render();
+    }
   }
 
   ngOnInit() {
@@ -30,42 +66,48 @@ export class MapComponent implements OnInit, OnChanges {
     const ak = this.config.ak;
 
     this.load(ak).then(() => {
-
+      // 脚本加载成功后，初始化地图信息
       $this.initBMapClass();
-
       $this.initBMapInstance();
-
       $this.initBMapEnvent();
 
-      // 初始化设置默认值
-      $this.currentMapDataConfig = $this.config.dataConfig[0];
-
-      $this.refreshMap('');
-
+      // 地图加载成功后，根据默认类型拉取数据
+      if (this.config.defaultType) {
+        this.setDataConfig(this.config.defaultType, '');
+        this.refreshMap();
+      } else {
+        // 根据当前数据currentMapData，渲染数据
+        this.render();
+      }
     }).catch((err) => {
       console.log(err);
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.data.firstChange) {
-      // init data
-      this.currentMapData = {};
-      this.currentMapData.area = changes.data.currentValue.area === undefined ? {} : changes.data.currentValue.area;
-      this.currentMapData.mapData = changes.data.currentValue.mapData;
-      this.currentMapData.config = this.currentMapDataConfig;
+  render() {
+    // BMapClass
+    const BMap = this.BMapClass;
+    // MapInstance
+    const map = this.MapInstance;
 
-      // 自动收集坐标、自动收集区域位置
-      const promises = this.collectGeographicInformation();
-
-      // 收集搜集数据
-      Promise.all(promises).then(values => {
-        // 初始化数据
-        this.addMarker();
-      }).catch(reason => {
-        console.log(reason);
-      });
+    // center point
+    let point = this.clickPoint;
+    if (!point) {
+      point = new BMap.Point(this.defaultPoint.longitude, this.defaultPoint.latitude);
     }
+    this.clickPoint = null;
+    map.centerAndZoom(point, this.currentMapData.config.zoom);
+
+    // 自动收集坐标、自动收集区域位置
+    const promises = this.collectGeographicInformation();
+
+    // 收集搜集数据
+    Promise.all(promises).then(values => {
+      // 初始化数据
+      this.addMarker();
+    }).catch(reason => {
+      console.log(reason);
+    });
   }
 
   load(ak: string): Promise<any> {
@@ -118,7 +160,8 @@ export class MapComponent implements OnInit, OnChanges {
     // 初始化地图
     // 第一个参数, 设置中心点坐标，可以使用中文或英文
     // 第二个参数, 设置地图级别, 级别为0 ~ 19, 数字越大，越详细
-    map.centerAndZoom(new BMap.Point(116.403694, 39.916042), 11);
+    const point = new BMap.Point(this.defaultPoint.longitude, this.defaultPoint.latitude);
+    map.centerAndZoom(point, this.defaultZoom);
     // map.centerAndZoom("北京", 11);
     // map.centerAndZoom("Hongkong", 11);
 
@@ -130,13 +173,11 @@ export class MapComponent implements OnInit, OnChanges {
       // 获取地图缩放级别
       const zoomLevel = map.getZoom();
       // 根据缩放来显示对应内容
-      $this.config.dataConfig.forEach(dataItem => {
-        if (zoomLevel >= dataItem.zoomRange[0] && zoomLevel <= dataItem.zoomRange[1]) {
-          // currentDataConfig
-          $this.currentMapDataConfig = dataItem;
-          $this.refresh.emit(dataItem.type);
-        }
-      });
+      if ($this.currentMapData.config.zoom !== zoomLevel) {
+        $this.setDataConfig('', zoomLevel);
+        // 获取新数据，刷新地图
+        $this.refreshMap();
+      }
     });
 
     // 监听地图移动,根据视野动态加载
@@ -154,12 +195,8 @@ export class MapComponent implements OnInit, OnChanges {
     });
   }
 
-  refreshMap(type) {
-    if (!type) {
-      type = this.config.dataConfig[0].type;
-    }
-
-    this.refresh.emit(type);
+  refreshMap() {
+    this.refresh.emit(this.currentMapData.config.type);
   }
 
   /**
@@ -287,16 +324,17 @@ export class MapComponent implements OnInit, OnChanges {
     });
 
     label.addEventListener('click', function () {
-      const curPoint = label.getPosition();
+      // 点击事件后，将当前配置取下一层类型
+      const nextType = curConf.nextType;
 
-      // 有下一层次数据显示，将会重新设置centerAndZoom的第二个参数zoom
-      // 从而会触发地图上绑定的事件zoomend，更新数据
-      // 如果没有nextZoom, 还显示当前节点
-      if (curConf.nextZoom) {
-        map.centerAndZoom(curPoint, curConf.nextZoom);
-      } else {
-        map.centerAndZoom(curPoint, curConf.zoomRange[0]);
-      }
+      // 设置点击位置
+      $this.clickPoint = label.getPosition();
+
+      // 更新为下一层配置为当前配置
+      $this.setDataConfig(nextType, '');
+
+      // 获取新数据，刷新地图
+      $this.refreshMap();
     });
 
     // 添加点位
@@ -433,6 +471,8 @@ export class MapComponent implements OnInit, OnChanges {
       name = itemData.title;
     }
 
+    area = area === undefined ? {} : area;
+
     // 建立多边形覆盖物
     const ply = new BMap.Polygon(area[name], {
       strokeWeight: 1,
@@ -457,7 +497,7 @@ export class MapComponent implements OnInit, OnChanges {
     // 当前要显示数据层的配置信息
     const curConf = this.currentMapData.config;
     const mapData = this.currentMapData.mapData;
-    const areaData = this.currentMapData.area;
+    const areaData = this.currentMapData.area === undefined ? {} : this.currentMapData.area;
 
     // 如果后台传了area数据，就不自动搜集了
     let bound = curConf.bound;
@@ -541,5 +581,43 @@ export class MapComponent implements OnInit, OnChanges {
     }
 
     return promises;
+  }
+
+  setDataConfig(type, zoom) {
+    // 当前要显示数据层的配置信息
+    const curConf = this.currentMapData.config;
+
+    // 点击事件后，将当前配置更新为下一层配置
+    let curDataConfig;
+    for (let index = 0; index < this.config.dataConfig.length; index++) {
+      // dataConfig
+      const dataConfig = this.config.dataConfig[index];
+
+      if (type) {
+        // 满足的配置
+        if (dataConfig.type === type) {
+          // currentData Config
+          curDataConfig = dataConfig;
+          break;
+        }
+      } else {
+        // 满足的配置
+        if (zoom >= dataConfig.zoomRange[0] && zoom <= dataConfig.zoomRange[1]) {
+          // currentData Config
+          curDataConfig = dataConfig;
+          break;
+        }
+      }
+    }
+
+    // 从当前配置，如果没有nextType, 设置默认type
+    if (!curDataConfig) {
+      curDataConfig = {
+        type: type,
+        zoom: curConf.zoom + 1
+      };
+    }
+
+    this.currentMapData.config = curDataConfig;
   }
 }

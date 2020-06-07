@@ -11,26 +11,30 @@ import {HttpClient} from '@angular/common/http';
 export class MappComponent implements OnInit {
     mapConfig = {
       ak: 'iGG2msceH2GHHVaeHBGNMDWZQRcWfrw4',
+      // defaultType: 'sinkArea',
       dataConfig: [
         {
           type: 'sinkArea',
+          nextType: 'sinkStreet',
           mode: 'circle',
           zoomRange: [0, 13],
-          nextZoom: 14,
+          zoom: 11,
           coordinate: false,
           bound: true
         },
         {
           type: 'sinkStreet',
+          nextType: 'sinkRoad',
           mode: 'circle',
           zoomRange: [14, 15],
-          nextZoom: 16,
+          zoom: 14,
           coordinate: true
         },
         {
           type: 'sinkRoad',
           mode: 'rectangle',
           zoomRange: [16, 19],
+          zoom: 16,
           coordinate: true,
         }
       ]
@@ -191,20 +195,29 @@ export class MappComponent implements OnInit {
 
     constructor(private router: Router, private http: HttpClient) {
 }
-  ngOnInit() { }
+  ngOnInit() {
+    this.mapData = {
+      // area: this.area,
+      type: 'sinkArea',
+      mapData: this.sinkAreaData
+    };
+  }
 
   getDataByType(type) {
     if (type === 'sinkArea') {
         this.mapData = {
           // area: this.area,
+          type: type,
           mapData: this.sinkAreaData
         };
     } else if (type === 'sinkStreet') {
         this.mapData = {
+          type: type,
           mapData: this.sinkStreetData
         };
     } else if (type === 'sinkRoad') {
       this.mapData = {
+        type: type,
         mapData: this.sinkRoadData
       };
     }
