@@ -17,15 +17,16 @@ export class MapComponent implements OnInit, OnChanges {
   cacheRectangle: any = [];
   cachePolygonAll: any = [];
   rootEl = 'allMap';
-  defaultPosition: any = {
-    'point': {
-      longitude: 116.403694,
-      latitude: 39.916042
-    },
-    'city': '北京市'
+  default: any = {
+    ak: 'iGG2msceH2GHHVaeHBGNMDWZQRcWfrw4',
+    // 设置后，初次加载会自动去获取值，渲染地图
+    // 不设置，首次加载会渲染mapData设置的数据内容
+    // type: 'sinkArea',
+    name: '北京市',
+    longitude: 116.403694,
+    latitude: 39.916042,
+    zoom: 11
   };
-  defaultZoom: any = 11;
-  clickPoint: any = null;
 
   constructor() {
 
@@ -35,11 +36,10 @@ export class MapComponent implements OnInit, OnChanges {
     // 第一次进入，地图异步并没有加载成功
     if (changes.data.firstChange) {
       // 设置默认type，将会在地图加载成功后，加载
-      if (!this.config.defaultType) {
+      if (!this.config.default.type) {
         // init data
-        this.currentMapData.area = changes.data.currentValue.area;
         this.currentMapData.mapData = changes.data.currentValue.mapData;
-        this.setDataConfig(changes.data.currentValue.type, '');
+        this.setDataConfig(changes.data.currentValue.type, '', changes.data.currentValue.center);
       }
       return;
     }
@@ -49,12 +49,10 @@ export class MapComponent implements OnInit, OnChanges {
     // 3. 地图缩放，改变zoom，调用refresh，从外界主动获取数据
     if (!changes.data.firstChange) {
       // init data
-      this.currentMapData.area = changes.data.currentValue.area;
       this.currentMapData.mapData = changes.data.currentValue.mapData;
-
       // 针对“组件外“操作，传递的数据类型和当前类型不等，不是refresh获取数据
       if (changes.data.currentValue.type !== this.currentMapData.config.type) {
-        this.setDataConfig(changes.data.currentValue.type, '');
+        this.setDataConfig(changes.data.currentValue.type, '', changes.data.currentValue.center);
       }
 
       // 根据当前数据currentMapData，渲染数据
@@ -66,17 +64,24 @@ export class MapComponent implements OnInit, OnChanges {
     // $this
     const $this = this;
 
-    const ak = this.config.ak;
+    // 初始化配置信息
+    this.initConf();
 
-    this.load(ak).then(() => {
+    // 加载百度地图api
+    this.load().then(() => {
       // 脚本加载成功后，初始化地图信息
       $this.initBMapClass();
       $this.initBMapInstance();
       $this.initBMapEnvent();
 
       // 地图加载成功后，根据默认类型拉取数据
-      if (this.config.defaultType) {
-        this.setDataConfig(this.config.defaultType, '');
+      if (this.config.default.type) {
+        const center = {
+          name: this.config.default.name,
+          longitude: this.config.default.longitude,
+          latitude: this.config.default.latitude
+        };
+        this.setDataConfig(this.config.default.type, '', center);
         this.refreshMap();
       } else {
         // 根据当前数据currentMapData，渲染数据
@@ -88,18 +93,11 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   render() {
-    // BMapClass
-    const BMap = this.BMapClass;
     // MapInstance
     const map = this.MapInstance;
 
     // center point
-    let point = this.clickPoint;
-    if (!point) {
-      // defaultPosition
-      point = this.getDefaultPoint();
-    }
-    this.clickPoint = null;
+    const point = this.getDefaultPoint();
     map.centerAndZoom(point, this.currentMapData.config.zoom);
 
     // 自动收集坐标、自动收集区域位置
@@ -114,7 +112,8 @@ export class MapComponent implements OnInit, OnChanges {
     });
   }
 
-  load(ak: string): Promise<any> {
+  load(): Promise<any> {
+    const ak = this.config.default.ak;
     const Map_URL = '//api.map.baidu.com/api?v=2.0&ak=' + ak + '&callback=JSONP_CALLBACK';
     const p = new Promise((resolve, reject) => {
       const script = document.createElement('script');
@@ -132,6 +131,19 @@ export class MapComponent implements OnInit, OnChanges {
     });
 
     return p;
+  }
+
+  initConf() {
+    // merge
+    const configTemp = Object.assign({}, this.default, this.config.default);
+
+    if (this.config.default.name || (this.config.default.longitude && this.config.default.latitude)) {
+      configTemp.name = this.config.default.name;
+      configTemp.longitude = this.config.default.longitude;
+      configTemp.latitude = this.config.default.latitude;
+    }
+
+    this.config.default = configTemp;
   }
 
   initBMapClass() {
@@ -165,7 +177,7 @@ export class MapComponent implements OnInit, OnChanges {
     // 第一个参数, 设置中心点坐标，可以使用中文或英文
     // 第二个参数, 设置地图级别, 级别为0 ~ 19, 数字越大，越详细
     const point = this.getDefaultPoint();
-    map.centerAndZoom(point, this.defaultZoom);
+    map.centerAndZoom(point, this.config.default.zoom);
     // map.centerAndZoom("北京", 11);
     // map.centerAndZoom("Hongkong", 11);
 
@@ -200,7 +212,10 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   refreshMap() {
-    this.refresh.emit(this.currentMapData.config.type);
+    this.refresh.emit({
+      type: this.currentMapData.config.type,
+      center: this.currentMapData.config.center,
+    });
   }
 
   /**
@@ -213,7 +228,6 @@ export class MapComponent implements OnInit, OnChanges {
     // 当前要显示数据层的配置信息
     const curConf = this.currentMapData.config;
     const mapData = this.currentMapData.mapData;
-    const areaData = this.currentMapData.area;
 
     // 初始化数据
     this.cacheRectangle = [];
@@ -233,7 +247,7 @@ export class MapComponent implements OnInit, OnChanges {
       // 如果有bound，将会对元素绘制区域
       if (curConf.bound) {
         // 绘画行政边界
-        this.setBoundary(itemData, areaData);
+        this.setBoundary(itemData);
       }
 
       // 设置label
@@ -331,11 +345,21 @@ export class MapComponent implements OnInit, OnChanges {
       // 点击事件后，将当前配置取下一层类型
       const nextType = curConf.nextType;
 
-      // 设置点击位置
-      $this.clickPoint = label.getPosition();
+      // name
+      let name = itemData.name;
+      if (!name) {
+        name = itemData.title;
+      }
+
+      // 中间位置
+      const center = {
+        'name': name,
+        'longitude': itemData.longitude,
+        'latitude': itemData.latitude
+      };
 
       // 更新为下一层配置为当前配置
-      $this.setDataConfig(nextType, '');
+      $this.setDataConfig(nextType, '', center);
 
       // 获取新数据，刷新地图
       $this.refreshMap();
@@ -463,7 +487,7 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   // 根据行政区划绘制边界
-  setBoundary(itemData, area) {
+  setBoundary(itemData) {
     // BMapClass
     const BMap = this.BMapClass;
     // MapInstance
@@ -475,10 +499,10 @@ export class MapComponent implements OnInit, OnChanges {
       name = itemData.title;
     }
 
-    area = area === undefined ? {} : area;
+    const area = itemData.area === undefined ? {} : itemData.area;
 
     // 建立多边形覆盖物
-    const ply = new BMap.Polygon(area[name], {
+    const ply = new BMap.Polygon(area, {
       strokeWeight: 1,
       strokeColor: '#0A77FB',
       fillColor: '#7EB8FC'
@@ -501,19 +525,12 @@ export class MapComponent implements OnInit, OnChanges {
     // 当前要显示数据层的配置信息
     const curConf = this.currentMapData.config;
     const mapData = this.currentMapData.mapData;
-    const areaData = this.currentMapData.area === undefined ? {} : this.currentMapData.area;
-
-    // 如果后台传了area数据，就不自动搜集了
-    let bound = curConf.bound;
-    if (bound && areaData !== undefined && areaData.length > 0) {
-      bound = false;
-    }
 
     // promises
     const promises = [];
 
     // 坐标开启的化，使用LocalSearch自动搜集地理坐标
-    if (!curConf.coordinate && !bound) {
+    if (!curConf.coordinate && !curConf.bound) {
       return promises;
     }
 
@@ -534,7 +551,7 @@ export class MapComponent implements OnInit, OnChanges {
       }
 
       // 坐标开启，使用LocalSearch自动搜集地理区域
-      if (bound) {
+      if (curConf.bound) {
         const p = new Promise((resolve, reject) => {
           // 获取范围
           const bdary = new BMap.Boundary();
@@ -542,10 +559,10 @@ export class MapComponent implements OnInit, OnChanges {
           bdary.get(name, function (rs) {
             const count = rs.boundaries.length;
             if (count > 0) {
-              areaData[name] = rs.boundaries[0];
+              itemData.area = rs.boundaries[0];
             }
 
-            resolve(areaData[name]);
+            resolve(itemData);
           });
         });
 
@@ -587,7 +604,7 @@ export class MapComponent implements OnInit, OnChanges {
     return promises;
   }
 
-  setDataConfig(type, zoom) {
+  setDataConfig(type, zoom, center) {
     // 当前要显示数据层的配置信息
     const curConf = this.currentMapData.config;
 
@@ -622,23 +639,28 @@ export class MapComponent implements OnInit, OnChanges {
       };
     }
 
+    curDataConfig.center = center;
+
     this.currentMapData.config = curDataConfig;
   }
 
   getDefaultPoint() {
+    // 当前要显示数据层的配置信息
+    const curConf = this.currentMapData.config;
+
     // BMapClass
     const BMap = this.BMapClass;
 
     // center point
     let point;
-    if (this.config.defaultPoint) {
-      point = new BMap.Point(this.config.defaultPoint.longitude, this.config.defaultPoint.latitude);
-    } else if (this.config.city) {
-      point = this.config.city;
-    } else if (this.defaultPosition.point) {
-      point = new BMap.Point(this.defaultPosition.point.longitude, this.defaultPosition.point.latitude);
-    } else if (this.defaultPosition.city) {
-      point = this.defaultPosition.city;
+    if (curConf && curConf.center && curConf.center.longitude && curConf.center.latitude) {
+      point = new BMap.Point(curConf.center.longitude, curConf.center.latitude);
+    } else if (curConf && curConf.center && curConf.center.name) {
+      point = curConf.center.name;
+    } else if (this.config.default.longitude && this.config.default.latitude) {
+      point = new BMap.Point(this.config.default.longitude, this.config.default.latitude);
+    } else if (this.config.default.name) {
+      point = this.config.default.name;
     }
 
     return point;
