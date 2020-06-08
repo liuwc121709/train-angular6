@@ -49,8 +49,8 @@ export class MappComponent implements OnInit {
   };
   mapData: any = [];
   sinkAreaData = [{
-    'name': '北京市海淀区',
-    'title': '海淀',
+    'position': '北京市海淀区',
+    'name': '海淀',
     'longitude': '116.305434',
     'latitude': '39.96549',
     // tslint:disable-next-line
@@ -58,8 +58,8 @@ export class MappComponent implements OnInit {
     'count': '445'
   },
   {
-    'name': '北京市朝阳区',
-    'title': '朝阳',
+    'position': '北京市朝阳区',
+    'name': '朝阳',
     'longitude': '116.449559',
     'latitude': '39.926375',
     // tslint:disable-next-line
@@ -67,8 +67,8 @@ export class MappComponent implements OnInit {
     'count': '377'
   },
   {
-    'name': '北京市昌平区',
-    'title': '昌平',
+    'position': '北京市昌平区',
+    'name': '昌平',
     'longitude': '116.237618',
     'latitude': '40.226413',
     // tslint:disable-next-line
@@ -76,8 +76,8 @@ export class MappComponent implements OnInit {
     'count': '370'
   },
   {
-    'name': '北京市门头沟区',
-    'title': '门头沟',
+    'position': '北京市门头沟区',
+    'name': '门头沟',
     'longitude': '116.107604',
     'latitude': '39.946147',
     // tslint:disable-next-line
@@ -85,8 +85,8 @@ export class MappComponent implements OnInit {
     'count': '300'
   },
   {
-    'name': '北京市石景山区',
-    'title': '石景山',
+    'position': '北京市石景山区',
+    'name': '石景山',
     'longitude': '116.229613',
     'latitude': '39.911354',
     // tslint:disable-next-line
@@ -96,105 +96,105 @@ export class MappComponent implements OnInit {
   ];
   sinkStreetData = [
     {
-      'name': '北京市海淀区圆明园',
-      'title': '圆明园',
+      'position': '北京市海淀区圆明园',
+      'name': '圆明园',
       'count': '50',
     },
     {
-      'name': '北京市海淀区五道口',
-      'title': '五道口',
+      'position': '北京市海淀区五道口',
+      'name': '五道口',
       'count': '30',
     },
     {
-      'name': '北京市海淀区中关村',
-      'title': '中关村',
+      'position': '北京市海淀区中关村',
+      'name': '中关村',
       'count': '66',
     },
     {
-      'name': '北京市石景山区苹果园',
-      'title': '苹果园',
+      'position': '北京市石景山区苹果园',
+      'name': '苹果园',
       'count': '12',
     },
     {
-      'name': '北京市石景山区杨庄',
-      'title': '杨庄',
+      'position': '北京市石景山区杨庄',
+      'name': '杨庄',
       'count': '32',
     },
     {
-      'name': '北京市石景山区八角',
-      'title': '八角',
+      'position': '北京市石景山区八角',
+      'name': '八角',
       'count': '89',
     },
     {
-      'name': '北京市门头沟区大峪',
-      'title': '大峪',
+      'position': '北京市门头沟区大峪',
+      'name': '大峪',
       'count': '54',
     },
     {
-      'name': '北京市门头沟区冯村',
-      'title': '冯村冯村',
+      'position': '北京市门头沟区冯村',
+      'name': '冯村冯村',
       'count': '9',
     },
     {
-      'name': '北京市朝阳区常营',
-      'title': '常营',
+      'position': '北京市朝阳区常营',
+      'name': '常营',
       'count': '77',
     },
     {
-      'name': '北京市朝阳区十里堡',
-      'title': '十里堡',
+      'position': '北京市朝阳区十里堡',
+      'name': '十里堡',
       'count': '26',
     }
   ];
   sinkRoadData = [
     {
-      'name': '北京市海淀区中关村科育小区',
-      'title': '科育小区',
+      'position': '北京市海淀区中关村科育小区',
+      'name': '科育小区',
       'count': '6',
     },
     {
-      'name': '北京市海淀区中关村黄庄小区',
-      'title': '黄庄小区',
+      'position': '北京市海淀区中关村黄庄小区',
+      'name': '黄庄小区',
       'count': '8',
     },
     {
-      'name': '北京市海淀区中关村东南小区',
-      'title': '东南小区',
+      'position': '北京市海淀区中关村东南小区',
+      'name': '东南小区',
       'count': '3',
     },
     {
-      'name': '北京市海淀区中关村大泥湾',
-      'title': '大泥湾',
+      'position': '北京市海淀区中关村大泥湾',
+      'name': '大泥湾',
       'count': '13',
     },
     {
-      'name': '北京市海淀区五道口东王庄',
-      'title': '东王庄',
+      'position': '北京市海淀区五道口东王庄',
+      'name': '东王庄',
       'count': '6',
     },
     {
-      'name': '北京市海淀区五道口西王庄小区',
-      'title': '西王庄小区',
+      'position': '北京市海淀区五道口西王庄小区',
+      'name': '西王庄小区',
       'count': '8',
     },
     {
-      'name': '北京市海淀区五道口王庄路27号院',
-      'title': '东南小区',
+      'position': '北京市海淀区五道口王庄路27号院',
+      'name': '东南小区',
       'count': '3',
     },
     {
-      'name': '北京市海淀区圆明园西苑医院',
-      'title': '西苑医院',
+      'position': '北京市海淀区圆明园西苑医院',
+      'name': '西苑医院',
       'count': '2',
     },
     {
-      'name': '北京市海淀区圆明园挂甲屯',
-      'title': '挂甲屯',
+      'position': '北京市海淀区圆明园挂甲屯',
+      'name': '挂甲屯',
       'count': '22',
     },
     {
-      'name': '北京市海淀区圆明园挂甲屯5号院',
-      'title': '挂甲屯5号院',
+      'position': '北京市海淀区圆明园挂甲屯5号院',
+      'name': '挂甲屯5号院',
       'count': '14',
     },
   ];
@@ -205,7 +205,7 @@ export class MappComponent implements OnInit {
     this.mapData = {
       type: 'sinkArea',
       center: {
-        'name': '北京市'
+        'position': '北京市'
       },
       mapData: this.sinkAreaData
     };

@@ -290,7 +290,7 @@ export class MapComponent implements OnInit, OnChanges {
     // 自定义label
     const tpl = '<div class="circleContent" data-longitude="' + itemData.longitude + '"' +
       ' data-latitude="' + itemData.latitude + '">' +
-      '<p class="name" title="' + itemData.title + '">' + itemData.title + '</p>' +
+      '<p class="name" title="' + itemData.name + '">' + itemData.name + '</p>' +
       '<p class="count"><span>' + itemData.count + '</span>公司</p>' +
       '</div>';
 
@@ -311,7 +311,7 @@ export class MapComponent implements OnInit, OnChanges {
       cursor: 'pointer',
       zIndex: 2
     });
-    label.setTitle(itemData.title);
+    label.setTitle(itemData.name);
 
     // 当鼠标悬停在label上时显示行政区划边界
     label.addEventListener('mouseover', function () {
@@ -346,10 +346,7 @@ export class MapComponent implements OnInit, OnChanges {
       const nextType = curConf.nextType;
 
       // name
-      let name = itemData.name;
-      if (!name) {
-        name = itemData.title;
-      }
+      const name = itemData.name;
 
       // 中间位置
       const center = {
@@ -383,7 +380,7 @@ export class MapComponent implements OnInit, OnChanges {
     // 自定义label样式
     const tpl = '<div class="labelName" data-longitude="' + itemData.longitude + '"' +
       ' data-latitude="' + itemData.latitude + '">' +
-      '<span class="name" title="' + itemData.title + '">' + itemData.title + '</span>' +
+      '<span class="name" title="' + itemData.name + '">' + itemData.name + '</span>' +
       '</div>';
 
     // label 在此处添加点位位置信息
@@ -403,7 +400,7 @@ export class MapComponent implements OnInit, OnChanges {
       cursor: 'pointer',
       zIndex: 2
     });
-    label.setTitle(itemData.title);
+    label.setTitle(itemData.name);
 
     // 修改覆盖物背景颜色
     label.addEventListener('mouseover', function () {
@@ -434,10 +431,7 @@ export class MapComponent implements OnInit, OnChanges {
 
   polygonAll(type, itemData) {
     // name
-    let name = itemData.name;
-    if (!name) {
-      name = itemData.title;
-    }
+    const name = itemData.name;
 
     // operation
     if (type === 'show') {
@@ -494,10 +488,7 @@ export class MapComponent implements OnInit, OnChanges {
     const map = this.MapInstance;
 
     // 名字
-    let name = itemData.name;
-    if (!name) {
-      name = itemData.title;
-    }
+    const name = itemData.name;
 
     const area = itemData.area === undefined ? {} : itemData.area;
 
@@ -545,18 +536,15 @@ export class MapComponent implements OnInit, OnChanges {
       const itemData = mapData[index];
 
       // 名字
-      let name = itemData.name;
-      if (!name) {
-        name = itemData.title;
-      }
+      const name = itemData.name;
 
       // 坐标开启，使用LocalSearch自动搜集地理区域
-      if (curConf.bound) {
+      if (curConf.bound && (itemData.area === undefined || itemData.area.length === 0)) {
         const p = new Promise((resolve, reject) => {
           // 获取范围
           const bdary = new BMap.Boundary();
           // 获取行政区域, 行政区域的点有多少个
-          bdary.get(name, function (rs) {
+          bdary.get(itemData.position, function (rs) {
             const count = rs.boundaries.length;
             if (count > 0) {
               itemData.area = rs.boundaries[0];
